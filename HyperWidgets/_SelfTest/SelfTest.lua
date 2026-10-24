@@ -127,6 +127,23 @@ function Initialize()
 	StartGeo()
 	check('city searching', City('Moscow'), 'searching...')
 
+	-- Magnet: window rects like the real ones (CPU / RAM 205x112, bin 158x74).
+	dofile(scripts .. 'Scripts\\Snap.lua')
+	local cpu = { x = 487, y = 190, w = 205, h = 112 }
+	local x, y = Pull({ x = 692, y = 214, w = 205, h = 112 }, { cpu })
+	check('side by side takes top', x .. ',' .. y, '692,190')
+	check('side by side aligned stays', Pull({ x = 692, y = 190, w = 205, h = 112 }, { cpu }), nil)
+	check('side by side too far stays', Pull({ x = 692, y = 240, w = 205, h = 112 }, { cpu }), nil)
+	check('not touching stays', Pull({ x = 700, y = 200, w = 205, h = 112 }, { cpu }), nil)
+	x, y = Pull({ x = 282, y = 200, w = 205, h = 112 }, { cpu })
+	check('left neighbour too', x .. ',' .. y, '282,190')
+	x, y = Pull({ x = 500, y = 302, w = 158, h = 74 }, { cpu })
+	check('stacked takes left edge', x .. ',' .. y, '487,302')
+	x, y = Pull({ x = 530, y = 302, w = 158, h = 74 }, { cpu })
+	check('stacked takes right edge', x .. ',' .. y, '534,302')
+	x, y = Pull({ x = 692, y = 200, w = 158, h = 74 }, { cpu, { x = 850, y = 196, w = 205, h = 171 } })
+	check('nearest of two neighbours', x .. ',' .. y, '692,196')
+
 	dofile(scripts .. 'Scripts\\Disks.lua')
 	check('disks colon list', table.concat(ParseDisks('C: G: - -'), ' '), 'C: G: - -')
 	check('disks loose', table.concat(ParseDisks('c g,d'), ' '), 'C: G: D: -')

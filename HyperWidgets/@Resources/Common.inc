@@ -42,6 +42,17 @@ DynamicVariables=1
 IfCondition=MeasureAlign >= 0
 IfTrueAction=[!Move #AlignX# #CURRENTCONFIGY#][!SetVariable AlignX -1]
 
+; Magnet: after a drag the widget lines up with the one it touches (Scripts\Snap.lua).
+[MeasureSnap]
+Measure=Script
+ScriptFile=#@#Scripts\Snap.lua
+
+[MeasureSnapTimer]
+Measure=Plugin
+Plugin=ActionTimer
+ActionList1=Repeat Tick,200,30
+Tick=[!CommandMeasure MeasureSnap "Tick()"]
+
 ; Frame X: Margin, or 0 when the window touches the right screen edge, so the empty space moves
 ; to the right side and the widget keeps a gap there too. Only the content shifts, the window stays put.
 [MeasureFrameX]
