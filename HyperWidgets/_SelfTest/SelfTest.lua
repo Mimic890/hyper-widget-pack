@@ -39,6 +39,18 @@ function Initialize()
 	check('full ring ends clearly left of its start', Arc(1, 1, 64, 7):match('Arc [^,]+,[^,]+,([^,]+)'), '30.2105')
 	check('rest of empty is almost full', Rest(0, 1, 64, 7):sub(-1), '1')
 	check('rest of full draws', Rest(1, 1, 64, 7) ~= nil, true)
+	-- NET ring middle: number (3 characters at most) + unit.
+	local ringSkin, speed = SKIN, 0
+	SKIN = { GetMeasure = function() return { GetValue = function() return speed end } end }
+	local function num(v) speed = v; return Num('M') .. ' ' .. Unit('M') end
+	check('speed bytes', num(512), '512 B')
+	check('speed small kB', num(2500), '2.4 kB')
+	check('speed kB', num(297677), '291 kB')
+	check('speed MB', num(10695475), '10 MB')
+	check('speed no 1000', num(1023), '1.0 kB')
+	check('speed edge', num(999.4), '999 B')
+	SKIN = ringSkin
+	check('speed missing measure', Num('NoSuchMeasure') .. Unit('NoSuchMeasure'), '0.0B')
 
 	-- Hover easing and colors (SKIN here is the self-test skin; theme vars come from a stub).
 	dofile(scripts .. 'Scripts\\Hover.lua')

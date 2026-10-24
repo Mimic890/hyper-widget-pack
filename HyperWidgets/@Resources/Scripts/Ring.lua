@@ -42,3 +42,24 @@ end
 function RestOf(name, scale, d, t, max)
 	return Rest(value(name, max), scale, d, t)
 end
+
+-- Speed for the middle of a ring, split so it fits: number (3 characters at most) and unit
+-- on separate lines. Text=[&MeasureRing:Num('MeasureIn')] / [&MeasureRing:Unit('MeasureIn')]
+local UNITS = { 'B', 'kB', 'MB', 'GB' }
+
+local function scaled(name)
+	local v, i = value(name, 1), 1
+	-- from 999.5 up "%.0f" would print 4 digits ("1000")
+	while v >= 999.5 and i < #UNITS do v, i = v / 1024, i + 1 end
+	return v, UNITS[i]
+end
+
+function Num(name)
+	local v = scaled(name)
+	return string.format(v < 9.95 and '%.1f' or '%.0f', v)
+end
+
+function Unit(name)
+	local _, u = scaled(name)
+	return u
+end
